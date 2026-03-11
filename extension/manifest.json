@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Timezone → UTC Converter",
+  "version": "3.2",
+  "description": "Convert any timezone to UTC with live display on every page. Works on Chrome, Edge, and Brave.",
+  "permissions": [
+    "storage",
+    "clipboardWrite",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
