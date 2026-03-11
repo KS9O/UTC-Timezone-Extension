@@ -72,19 +72,20 @@ const mer=match[4]?match[4].toLowerCase():null
 if(mer){
 if(mer==="pm"&&h!==12)h+=12
 if(mer==="am"&&h===12)h=0
+return{h,min,sec:s,original:match[0],mer:mer}
 }
-return{h,min,sec:s,original:match[0]}
+return{h,min,sec:s,original:match[0],mer:null}
 }
 return null
 }
 
-function findTimezone(text){
+function findTimezoneInText(text){
 const upper=text.toUpperCase()
-if(upper.includes("ET")||upper.includes("EST")||upper.includes("EDT"))return"ET"
-if(upper.includes("CT")||upper.includes("CST")||upper.includes("CDT"))return"CT"
-if(upper.includes("MT")||upper.includes("MST")||upper.includes("MDT"))return"MT"
-if(upper.includes("PT")||upper.includes("PST")||upper.includes("PDT"))return"PT"
-if(upper.includes("UTC")||upper.includes("GMT")||upper.includes(" Z"))return"UTC"
+if(upper.includes("EDT")||upper.includes("EST "))return"ET"
+if(upper.includes("CDT")||upper.includes("CST "))return"CT"
+if(upper.includes("MDT")||upper.includes("MST "))return"MT"
+if(upper.includes("PDT")||upper.includes("PST "))return"PT"
+if(upper.includes("UTC")||upper.includes("GMT"))return"UTC"
 return null
 }
 
@@ -147,25 +148,30 @@ return
 }
 
 const txt=e.target.textContent||e.target.innerText||""
-if(txt&&txt.length>3&&txt.length<100){
+if(txt&&txt.length>5&&txt.length<80){
 const timeData=parseTimeInText(txt)
-if(timeData&&timeData.h<=12){
-const now=new Date()
-const tzFound=findTimezone(txt)
-const ms=new Date(now.getFullYear(),now.getMonth(),now.getDate(),timeData.h,timeData.min,timeData.sec||0).getTime()
-let utcMs
+if(timeData&&timeData.h>=0&&timeData.h<=23){
+const tzFound=findTimezoneInText(txt)
+let utcStr
 if(tzFound){
-const month=now.getMonth()
-const inDST=month>=3&&month<=10
-const offsets={ET:inDST?-4:-5,CT:inDST?-5:-6,MT:inDST?-6:-7,PT:inDST?-7:-8,UTC:0}
+const offsets={ET:-4,CT:-5,MT:-6,PT:-7,UTC:0}
 const offset=offsets[tzFound]||0
-utcMs=ms-(offset*60*60000)
+let hour=timeData.h-offset
+if(hour<0)hour+=24
+if(hour>=24)hour-=24
+const ampm=hour>=12?"PM":"AM"
+const hour12=hour%12
+utcStr=(hour12===0?12:hour12)+":"+timeData.min.toString().padStart(2,"0")+" "+ampm
 }else{
-const offset=now.getTimezoneOffset()
-utcMs=ms-(offset*60000)
+const now=new Date()
+const offset=-now.getTimezoneOffset()/60
+let hour=timeData.h-offset
+if(hour<0)hour+=24
+if(hour>=24)hour-=24
+const ampm=hour>=12?"PM":"AM"
+const hour12=Math.floor(hour)%12
+utcStr=(hour12===0?12:hour12)+":"+timeData.min.toString().padStart(2,"0")+" "+ampm
 }
-const utcDate=new Date(utcMs)
-const utcStr=formatTime(utcDate,"UTC")
 lastTimeEl=e.target
 showHoverPanel(hoverX,hoverY,utcStr)
 }
