@@ -256,11 +256,24 @@
     }
   });
 
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.panelVisible) {
+      panelVisible = changes.panelVisible.newValue;
+      panel.classList.toggle("show", panelVisible);
+    }
+    if (changes.selectedTimezone) {
+      selectedTz = changes.selectedTimezone.newValue;
+      update();
+    }
+  });
+
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === "showUtcPanel") {
         panel.classList.add("show");
+        panelVisible = true;
     } else if (msg.type === "hideUtcPanel") {
         panel.classList.remove("show");
+        panelVisible = false;
     } else if (msg.type === "contextMenuConvert") {
         const match = msg.text.match(timeRegex);
         if (match) {

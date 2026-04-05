@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const list = document.getElementById("timezoneList");
   const datetimePopup = document.getElementById("datetimePopup");
   const panelToggle = document.getElementById("panelToggle");
+  const toggleRow = document.querySelector(".toggle-row");
   const output = document.getElementById("output");
 
   const formatTzName = (tz) => tz.replace(/_/g, " ");
@@ -31,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ? timezones.filter(tz => tz.toLowerCase().includes(filter.toLowerCase()))
       : timezones.slice(0, 20);
     
-    // Add alias if it matches exactly
     const upperFilter = filter.toUpperCase();
     if (timezoneAliases[upperFilter] && !filtered.includes(timezoneAliases[upperFilter])) {
       filtered.unshift(timezoneAliases[upperFilter]);
@@ -136,15 +136,29 @@ document.addEventListener("DOMContentLoaded", () => {
     showResult(formatToUTC(d));
   });
 
-  panelToggle.addEventListener("click", () => {
+  const togglePanel = () => {
     panelVisible = !panelVisible;
     panelToggle.classList.toggle("on", panelVisible);
     chrome.storage.sync.set({ panelVisible });
+    
+    // Broadcast message to active tab as a priority update
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: panelVisible ? "showUtcPanel" : "hideUtcPanel" });
+      if (tabs && tabs[0] && tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: panelVisible ? "showUtcPanel" : "hideUtcPanel" }, () => {
+          if (chrome.runtime.lastError) { /* ignore */ }
+        });
       }
     });
+  };
+
+  toggleRow.addEventListener("click", togglePanel);
+  toggleRow.style.cursor = "pointer";
+
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.panelVisible) {
+      panelVisible = changes.panelVisible.newValue;
+      panelToggle.classList.toggle("on", panelVisible);
+    }
   });
 
   chrome.storage.sync.get(["selectedTimezone", "panelVisible"], (r) => {
