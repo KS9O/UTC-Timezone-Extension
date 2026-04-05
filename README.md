@@ -2,12 +2,12 @@
 
 The Timezone to UTC Converter is a professional browser extension designed to provide instantaneous, accurate UTC time conversions directly within the web browsing experience. It is built to assist developers, traders, and global teams who rely on UTC as their primary time standard.
 
-## 📺 Video Demonstration
+## Video Demonstration
 Watch the extension in action: [Click here to watch the demo on YouTube](https://www.youtube.com/watch?v=HMNJb-iqSaw)
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 ### 1. Live System Dashboard
 A draggable, glassmorphism-styled floating panel remains visible on web pages to provide real-time synchronization between **UTC Universal** time and the **Local System** time. The panel is designed with a high-contrast dashboard aesthetic and remembers its user-defined position across different websites and browsing sessions.
@@ -31,11 +31,8 @@ The extension automatically scans the webpage for time strings. When a user paus
 
 ---
 
-## 📦 Installation
-1. Download the source code from this repository.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode** in the top right corner.
-4. Click **Load unpacked** and select the `extension` directory.
+## Installation
+* Add to your browser found within the [Google Chrome Extension Store](https://chromewebstore.google.com/detail/timezone-%E2%86%92-utc-converter/ldiglbdlekhfnaahokmmhomhfnolngap?authuser=1&hl=en&pli=1)
 
 ---
 
