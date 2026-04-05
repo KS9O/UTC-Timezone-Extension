@@ -39,4 +39,3 @@ The extension automatically scans the webpage for time strings. When a user paus
 
 ---
 
-*Developed to streamline workflows for LevelBlue MDR and global operations.*
