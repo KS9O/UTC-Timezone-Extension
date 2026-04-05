@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Timezone → UTC Converter",
+  "version": "3.5",
+  "description": "Premium Timezone → UTC Converter with Live Dashboard, Draggable UI, and Smart Hover Detection.",
+  "permissions": [
+    "storage",
+    "clipboardWrite",
+    "activeTab",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

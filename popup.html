@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Timezone → UTC</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a;
+    color: white;
+    padding: 16px;
+    width: 320px;
+    margin: 0;
+  }
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    color: #f1f5f9;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .label {
+    display: block;
+    margin-top: 14px;
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: white;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  }
+  button {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    cursor: pointer;
+    margin-top: 12px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px; font-weight: 600; width: 100%;
+    transition: all 0.15s;
+  }
+  button:hover {
+    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+  button:active { transform: translateY(0); }
+  .btn-row { display: flex; gap: 8px; align-items: flex-end; }
+  .btn-row button { margin-top: 0; width: auto; flex: none; }
+  .icon-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    font-size: 16px; padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .icon-btn:hover { background: #334155; }
+  .icon-popup {
+    position: absolute;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+    width: 200px;
+  }
+  .icon-popup.show { display: block; }
+  .icon-popup label { display: block; margin-bottom: 4px; font-size: 11px; color: #94a3b8; }
+  .icon-popup input { margin-bottom: 12px; margin-top: 0; }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .toggle-label { font-size: 13px; color: #cbd5e1; font-weight: 500; }
+  .toggle-switch {
+    position: relative;
+    width: 44px; height: 24px;
+    background: #334155;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.25s;
+  }
+  .toggle-switch.on { background: #38bdf8; }
+  .toggle-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 20px; height: 20px;
+    background: white; border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on::after { transform: translateX(20px); }
+  .result-text {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #38bdf8;
+    text-align: center;
+    font-weight: 600;
+    min-height: 20px;
+  }
+  .dropdown {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #1e293b;
+    margin-top: 4px;
+    border-radius: 10px;
+    display: none;
+    border: 1px solid #334155;
+    position: absolute;
+    width: calc(100% - 32px);
+    z-index: 50;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+  .section-divider {
+    height: 1px; background: linear-gradient(90deg, transparent, #334155, transparent); margin: 16px 0;
+  }
+</style>
+</head>
+<body>
+<h2>🌐 Timezone → UTC</h2>
+
+<label class="label">Change Base Timezone</label>
+<input id="timezoneSearch" placeholder="Search timezone (e.g. London, Tokyo)..." autocomplete="off">
+<div class="dropdown" id="timezoneList"></div>
+
+<div class="toggle-row">
+  <span class="toggle-label">Floating Time Panel</span>
+  <div class="toggle-switch on" id="panelToggle"></div>
+</div>
+
+<div class="section-divider"></div>
+
+<label class="label">Quick Convert Today's Time</label>
+<div class="btn-row">
+  <button class="icon-btn" id="datetimeIcon" title="Pick Date & Time">📅</button>
+  <input type="time" id="localTime" style="margin-top:0">
+  <button id="convertBtn">→</button>
+</div>
+
+<div class="icon-popup" id="datetimePopup">
+  <label>Date</label>
+  <input type="date" id="manualDate">
+  <label>Time</label>
+  <input type="time" id="manualTime">
+  <button id="convertFromPopup" style="margin-top:0">Convert</button>
+</div>
+
+<div class="section-divider"></div>
+
+<label class="label">Smart Parse Date/Time</label>
+<textarea id="customInput" rows="2" placeholder="e.g. tomorrow at 3pm, 2026-04-10 14:00"></textarea>
+<button id="convertCustomBtn">Convert to UTC</button>
+<span class="result-text" id="output"></span>
+
+<script src="popup.js"></script>
+</body>
+</html>
